@@ -90,7 +90,7 @@ export default class FeedbackMain extends React.Component {
   render() {
     return (
       <View>
-        <Text>Main View</Text>
+        <Text>الصفحة الرئيسية</Text>
         {this.state.fields.map((item)=>{
             return (
                 <FieldItem 
@@ -103,7 +103,7 @@ export default class FeedbackMain extends React.Component {
             )
         })}
         <Button 
-          title={this.state.submitted?"You already submitted":"Submit"}
+          title={this.state.submitted?"تم الادخال":"ادخال"}
           onPress={this.submit}
           disabled={this.state.submitted}
         />

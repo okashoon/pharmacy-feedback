@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Button } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import Login from './src/components/login'
 import FeedbackMain from './src/components/feedback_main';
+import AdminPanel from './src/components/admin_panel';
 
 const styles = StyleSheet.create({
   container: {
@@ -19,5 +20,8 @@ export default StackNavigator({
   },
   Feedback: {
     screen: FeedbackMain
+  },
+  Admin_panel: {
+    screen: AdminPanel
   }
 });

@@ -1,5 +1,11 @@
 {
   "expo": {
-    "sdkVersion": "25.0.0"
+    "name": "pharmacy feedback",
+    "icon": "./public/logo.png",
+    "version": "1.0.0",
+    "sdkVersion": "25.0.0",
+    "android": {
+      "package": "com.abdelhakpharmacy.employeefeedback"
+    }
   }
 }

@@ -19,25 +19,30 @@ export default class Login extends React.Component {
       method: 'POST',
       url: `${api.BASE_URL}/users/sign_in`,
       dataType: 'json',
-      // data: {email: this.state.email,
-      //        password: this.state.password},
-       data: {email: 'q@q.com',
-             password: '123'},
+      data: {email: this.state.email,
+             password: this.state.password},
+      //  data: {email: 'q@q.com',
+      //        password: '123'},
       headers: {  Accept: 'application/json',
           'Content-Type': 'application/json'},
     }).then((response)=>{
       
-      token = response.headers;
-
+      var token = response.headers;
+      var user = response.data.user;
+      var roles = response.data.roles;
+      console.log(response)
       try {
         AsyncStorage.setItem("@emp_feedback:token", JSON.stringify(token), ()=>{
-          AsyncStorage.setItem("@emp_feedback:user", JSON.stringify(response.data.data))
+          AsyncStorage.setItem("@emp_feedback:user", JSON.stringify(user))
         });
       } catch (error) {
         this.setState({errors:['AsyncStorage error: ' + error.message]});
       }
-      
-      this.props.navigation.navigate("Feedback",{user_id:response.data.data.id})
+      if (roles.filter((role)=>role.id==1).length>0){
+        this.props.navigation.navigate("Admin_panel",{user_id:user.id})  
+      } else {
+        this.props.navigation.navigate("Feedback",{user_id:user.id})
+      }
       
     }).catch((error)=>{
       console.log(error)
@@ -52,6 +57,7 @@ export default class Login extends React.Component {
             <TextInput 
               style={{
                     height: 40,
+                    width: '70%',
                     backgroundColor: 'rgba(225,225,225,0.4)',
                     marginBottom: 10,
                     padding: 10,
@@ -63,6 +69,7 @@ export default class Login extends React.Component {
             <TextInput 
                 style={{
                   height: 40,
+                  width: '70%',
                   backgroundColor: 'rgba(225,225,225,0.4)',
                   marginBottom: 10,
                   padding: 10,
@@ -73,7 +80,7 @@ export default class Login extends React.Component {
                 />
             <Button
             onPress={this.handleSubmit}
-            title="Login"
+            title="دخول"
             color="#841584" />
 
             {
