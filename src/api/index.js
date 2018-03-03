@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.1.4:3000"
+const BASE_URL = "https://pharmacy-feedback.herokuapp.com"
 export default{
     BASE_URL
 } 

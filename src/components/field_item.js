@@ -22,7 +22,7 @@ export default class FieldItem extends React.Component {
               onValueChange={this._onPress}
             />
             <Text style={{ color: textColor }}>
-              {this.props.state? "hello" : "aaaaa"}
+              {this.props.title}
             </Text>
           </View>
         </TouchableOpacity>
