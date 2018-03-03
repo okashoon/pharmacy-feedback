@@ -1,6 +1,7 @@
 import React from 'react';
-import { StyleSheet, Text, View, TextInput, Button } from 'react-native';
+import { StyleSheet, Text, View, TextInput, Button, AsyncStorage } from 'react-native';
 import { StackNavigator } from 'react-navigation';
+import axios from 'axios'
 
 export default class Login extends React.Component {
   constructor(props){
@@ -8,35 +9,40 @@ export default class Login extends React.Component {
     this.state = {
       email: "",
       password: "",
-      errors:""
+      errors:[]
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
   handleSubmit(event) {
-    console.log("submitted")
-    fetch('http://192.168.1.5:3000/users', {
+    axios({
       method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email: this.state.email,
-        password: this.state.password,
-      }),
-    }).then((response)=>response.json())
-    .then((data)=>{
-      if (data.status == 422){
-        this.setState({errors:data})
-        // this.setState({errors:JSON.stringify(this.props.navigation.navigate)})
-      } else {
-        this.setState({errors:data._bodyText})
-        
-        // this.props.navigation.navigate('Feedback')
+      url: 'http://192.168.1.5:3000/users/sign_in',
+      dataType: 'json',
+      // data: {email: this.state.email,
+      //        password: this.state.password},
+       data: {email: 'q@q.com',
+             password: '123'},
+      headers: {  Accept: 'application/json',
+          'Content-Type': 'application/json'},
+    }).then((response)=>{
+      
+      token = response.headers;
+
+      try {
+        AsyncStorage.setItem("@emp_feedback:token", JSON.stringify(token), ()=>{
+          AsyncStorage.setItem("@emp_feedback:user", JSON.stringify(response.data.data))
+        });
+      } catch (error) {
+        this.setState({errors:['AsyncStorage error: ' + error.message]});
       }
-    }).catch((response)=>{
-      this.setState({errors:response.body})
-    });
+      
+      this.props.navigation.navigate("Feedback",{user_id:response.data.data.id})
+      
+    }).catch((error)=>{
+      console.log(error)
+      this.setState({errors:error.response.data.errors})
+    })
+    
   }
 
     render() {
@@ -71,8 +77,8 @@ export default class Login extends React.Component {
 
             {
               this.state.errors ?
-                // this.state.errors.map((error)=><Text>{error}</Text>) : <Text></Text>
-                <Text>{this.state.errors}</Text> : <Text></Text>
+                this.state.errors.map((error)=><Text>{error}</Text>) : <Text></Text>
+                // <Text>{this.state.errors}</Text> : <Text></Text>
             }
             
               
