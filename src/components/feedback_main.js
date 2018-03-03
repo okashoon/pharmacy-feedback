@@ -1,7 +1,9 @@
 import React from "react";
 import { StyleSheet, TextInput, View, Text, AsyncStorage, FlatList, Button  } from "react-native";
 import axios from "axios";
-import FieldItem from './field_item'
+import FieldItem from './field_item';
+import api from '../api/index'
+
 
 var token = {};
 export default class FeedbackMain extends React.Component {
@@ -9,7 +11,7 @@ export default class FeedbackMain extends React.Component {
     super();
     this.state = {
       fields: [],
-      
+      submitted: false
     };
     this._toggleSelection = this._toggleSelection.bind(this);
     this.submit = this.submit.bind(this);
@@ -21,7 +23,26 @@ export default class FeedbackMain extends React.Component {
       console.log(token);
       axios({
         method: "get",
-        url: "http://192.168.1.5:3000/fields",
+        url: `${api.BASE_URL}/fields/check_if_submitted`,
+        headers: {
+            'client': token['client'],
+            'access-token': token['access-token'],
+            'uid': token['uid']
+        }
+      }).then(
+        resp => {
+          console.log(resp)
+          this.setState({submitted:resp.data.submitted})
+          
+        },
+        err => {
+          console.log(err);
+        }
+      );
+
+      axios({
+        method: "get",
+        url: `${api.BASE_URL}/fields`,
         headers: {
             'client': token['client'],
             'access-token': token['access-token'],
@@ -36,6 +57,7 @@ export default class FeedbackMain extends React.Component {
           console.log(err);
         }
       );
+
     });
   }
 
@@ -49,7 +71,7 @@ export default class FeedbackMain extends React.Component {
   submit(){
     axios({
       method: "POST",
-      url: "http://192.168.1.5:3000/fields/submit_fields",
+      url: `${api.BASE_URL}/fields/submit_fields`,
       headers: {
           'client': token['client'],
           'access-token': token['access-token'],
@@ -60,6 +82,8 @@ export default class FeedbackMain extends React.Component {
         fields: this.state.fields,
         user_id: this.props.navigation.state.params.user_id
       }
+    }).then((response)=>{
+      this.setState({submitted:true})
     })
   }
 
@@ -79,8 +103,9 @@ export default class FeedbackMain extends React.Component {
             )
         })}
         <Button 
-          title="Submit"
+          title={this.state.submitted?"You already submitted":"Submit"}
           onPress={this.submit}
+          disabled={this.state.submitted}
         />
       </View>
     );

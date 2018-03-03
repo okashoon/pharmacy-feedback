@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, TextInput, Button, AsyncStorage } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import axios from 'axios'
+import api from '../api/index'
 
 export default class Login extends React.Component {
   constructor(props){
@@ -16,7 +17,7 @@ export default class Login extends React.Component {
   handleSubmit(event) {
     axios({
       method: 'POST',
-      url: 'http://192.168.1.5:3000/users/sign_in',
+      url: `${api.BASE_URL}/users/sign_in`,
       dataType: 'json',
       // data: {email: this.state.email,
       //        password: this.state.password},
