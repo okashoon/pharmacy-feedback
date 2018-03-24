@@ -14,6 +14,15 @@ export default class Login extends React.Component {
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
+  componentDidMount() {
+    AsyncStorage.getItem("@emp_feedback:user", (err, data) => {
+      user = JSON.parse(data);
+      if (user && user.password && user.email){
+        console.log(user.email)
+        this.setState({email: user.email, password:user.password})
+      }
+    })
+  }
   handleSubmit(event) {
     axios({
       method: 'POST',
@@ -21,16 +30,16 @@ export default class Login extends React.Component {
       dataType: 'json',
       data: {email: this.state.email,
              password: this.state.password},
-      //  data: {email: 'q@q.com',
-      //        password: '123'},
+      
       headers: {  Accept: 'application/json',
           'Content-Type': 'application/json'},
     }).then((response)=>{
       
       var token = response.headers;
       var user = response.data.user;
+      user.password = this.state.password;
       var roles = response.data.roles;
-      console.log(response)
+      
       try {
         AsyncStorage.setItem("@emp_feedback:token", JSON.stringify(token), ()=>{
           AsyncStorage.setItem("@emp_feedback:user", JSON.stringify(user))
@@ -64,6 +73,7 @@ export default class Login extends React.Component {
                     color: '#fff'
                 }} 
               placeholder="User name"
+              value = {this.state.email}
               onChangeText={(email)=>this.setState({email:email})}
               />
             <TextInput 
@@ -76,7 +86,9 @@ export default class Login extends React.Component {
                   color: '#fff'
                 }} 
                 placeholder="Password"
+                value = {this.state.password}
                 onChangeText={(password)=>this.setState({password:password})}
+                secureTextEntry
                 />
             <Button
             onPress={this.handleSubmit}

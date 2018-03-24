@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet, TextInput, View, Text, AsyncStorage, FlatList, Button  } from "react-native";
+import { Container, Header, Content } from 'native-base';
 import axios from "axios";
 import FieldItem from './field_item';
 import api from '../api/index'
@@ -51,7 +52,11 @@ export default class FeedbackMain extends React.Component {
       }).then(
         resp => {
           console.log(resp.data);
-          this.setState({fields:resp.data})
+          var fields = resp.data;
+          for (var field of fields){
+            field.state = 0;
+          }
+          this.setState({fields:fields})
         },
         err => {
           console.log(err);
@@ -89,25 +94,27 @@ export default class FeedbackMain extends React.Component {
 
   render() {
     return (
-      <View>
-        <Text>الصفحة الرئيسية</Text>
-        {this.state.fields.map((item)=>{
-            return (
-                <FieldItem 
-                key={item.id}
-                id={item.id}
-                title={item.desc}
-                onPressItem={this._toggleSelection}
-                state={item.state}
-              />
-            )
-        })}
-        <Button 
-          title={this.state.submitted?"تم الادخال":"ادخال"}
-          onPress={this.submit}
-          disabled={this.state.submitted}
-        />
-      </View>
+      <Container>
+        <Content>
+          <Text>الصفحة الرئيسية</Text>
+          {this.state.fields.map((item)=>{
+              return (
+                  <FieldItem 
+                  key={item.id}
+                  id={item.id}
+                  title={item.desc}
+                  onPressItem={this._toggleSelection}
+                  state={item.state}
+                />
+              )
+          })}
+          <Button 
+            title={this.state.submitted?"تم الادخال":"ادخال"}
+            onPress={this.submit}
+            disabled={this.state.submitted}
+          />
+      </Content>
+      </Container>
     );
   }
 }
